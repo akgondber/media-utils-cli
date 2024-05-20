@@ -1,0 +1,36 @@
+{
+  "name": "media-utils-cli",
+  "version": "0.0.1",
+  "description": "Media utils for different kinds of files - transforming, resizing, image manipulations, etc.",
+  "scripts": {
+    "test": "uvu",
+    "start": "node cli.js",
+    "prettify": "prettier . --write",
+    "build": "unbuild"
+  },
+  "keywords": [],
+  "author": "Rushan Alyautdinov",
+  "license": "MIT",
+  "dependencies": {
+    "consola": "^3.2.3",
+    "execa": "^9.1.0",
+    "fdir": "^6.1.1",
+    "jimp": "^0.22.12",
+    "ora": "^8.0.1",
+    "p-map": "^7.0.2",
+    "ramda": "^0.30.0"
+  },
+  "start": "node index.js",
+  "type": "module",
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "uvu": "^0.5.6"
+  },
+  "prettify": "prettier . --write",
+  "bin": {
+    "media-utils-cli": "dist/cli.js",
+    "media-utils": "dist/cli.js",
+    "medut": "dist/cli.js",
+    "med": "dist/cli.js"
+  }
+}
