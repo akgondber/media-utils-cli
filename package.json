@@ -1,23 +1,39 @@
 {
   "name": "media-utils-cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Media utils for different kinds of files - transforming, resizing, image manipulations, etc.",
+  "repository": "https://github.com/akgondber/media-utils-cli",
+  "author": "Rushan Alyautdinov <akgondber@gmail.com>",
   "scripts": {
     "test": "uvu",
     "start": "node cli.js",
     "prettify": "prettier . --write",
     "build": "unbuild"
   },
-  "keywords": [],
-  "author": "Rushan Alyautdinov",
+  "keywords": [
+    "cli",
+    "media",
+    "transformation",
+    "file",
+    "helper",
+    "util",
+    "manipulation",
+    "image",
+    "pdf",
+    "video",
+    "convert",
+    "convertation"
+  ],
   "license": "MIT",
   "dependencies": {
+    "@clack/prompts": "^0.7.0",
     "consola": "^3.2.3",
     "execa": "^9.1.0",
     "fdir": "^6.1.1",
     "jimp": "^0.22.12",
     "ora": "^8.0.1",
     "p-map": "^7.0.2",
+    "pdf-lib": "^1.17.1",
     "ramda": "^0.30.0"
   },
   "start": "node index.js",
@@ -32,5 +48,6 @@
     "media-utils": "dist/cli.mjs",
     "medut": "dist/cli.mjs",
     "med": "dist/cli.mjs"
-  }
+  },
+  "respoitory": "https://github.com/akgondber/media-utils-cli"
 }

@@ -2,11 +2,13 @@
 
 import { consola } from "consola";
 import * as R from "ramda";
+import { intro, outro } from '@clack/prompts';
 import {
   convertAllFilesToGif,
   convertVideoToGif,
 } from "./source/video-utils.js";
 import { blit, blur, invert, flip, text } from "./source/image-utils.js";
+import { createPDFWithDrawnText, addTextToPdf, embedJpgToPdf } from "./source/pdf-utils.js";
 
 const utils = {
   video: {
@@ -20,10 +22,18 @@ const utils = {
     flip,
     text,
   },
+  pdf: {
+    createPDFWithDrawnText,
+    addTextToPdf,
+    embedJpgToPdf,
+  }
 };
 
 let options = [];
 consola.box("Media-Utils");
+
+intro(`create-my-app`);
+
 const mediaFileType = await consola.prompt(
   "What is the type of media file you want to operate on",
   {
@@ -31,6 +41,7 @@ const mediaFileType = await consola.prompt(
     options: [
       { label: "Video file", value: "video" },
       { label: "Image file", value: "image" },
+      { label: "PDF file", value: "pdf" },
     ],
   },
 );
@@ -57,6 +68,15 @@ if (mediaFileType === "video") {
     ],
     options,
   );
+} else if (mediaFileType === 'pdf') {
+  options = R.concat(
+    [
+      { label: "Create pdf with text", value: 'createPDFWithDrawnText' },
+      { label: "Add text to pdf file", value: "addTextToPdf" },
+      { label: 'Embed jpg image to pdf file', value: "embedJpgToPdf" },
+    ],
+    options,
+  );
 }
 
 const result = await consola.prompt("What kind of util you want to use", {
@@ -66,6 +86,9 @@ const result = await consola.prompt("What kind of util you want to use", {
 
 const func = R.path([mediaFileType, result], utils);
 await func();
+
+
+outro(`You're all set!`);
 // await items[result]();
 // if (result === 'convertmp4togif') {
 
