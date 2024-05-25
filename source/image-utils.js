@@ -1,5 +1,6 @@
 import jimp from "jimp";
 import consola from "consola";
+import { getDestFile, getFile, getNumber, getSourceFile } from "./clack-helpers.js";
 
 const saveImage = async (image) => {
   const whereToWrite = await consola.prompt("What is the destination file");
@@ -8,13 +9,11 @@ const saveImage = async (image) => {
 };
 
 const blit = async () => {
-  const imageFile = await consola.prompt("Source filename");
-  const placeableFile = await consola.prompt("Image to be inserted");
-  const x = await consola.prompt("X");
-  const y = await consola.prompt("Y");
-  const whereToWrite = await consola.prompt(
-    "Filename where to save the image to",
-  );
+  const imageFile = await getSourceFile(); // consola.prompt("Source filename");
+  const placeableFile = await getFile("Image file to be inserted"); // consola.prompt("Image to be inserted");
+  const x = await getNumber("X"); // consola.prompt("X");
+  const y = await getNumber("Y"); // consola.prompt("Y");
+  const whereToWrite = await getDestFile();
 
   const image = await jimp.read(imageFile);
   const target = await jimp.read(placeableFile);

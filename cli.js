@@ -2,13 +2,13 @@
 
 import { consola } from "consola";
 import * as R from "ramda";
-import { intro, outro } from '@clack/prompts';
+import { intro, outro, select } from '@clack/prompts';
 import {
   convertAllFilesToGif,
   convertVideoToGif,
 } from "./source/video-utils.js";
 import { blit, blur, invert, flip, text } from "./source/image-utils.js";
-import { createPDFWithDrawnText, addTextToPdf, embedJpgToPdf } from "./source/pdf-utils.js";
+import { createPDFWithDrawnText, addTextToPdf, embedJpgToPdf, readPdfMetadata } from "./source/pdf-utils.js";
 
 const utils = {
   video: {
@@ -26,18 +26,18 @@ const utils = {
     createPDFWithDrawnText,
     addTextToPdf,
     embedJpgToPdf,
+    readPdfMetadata,
   }
 };
 
 let options = [];
 consola.box("Media-Utils");
 
-intro(`create-my-app`);
+intro(`Let's do some stuff`);
 
-const mediaFileType = await consola.prompt(
-  "What is the type of media file you want to operate on",
+const mediaFileType = await select(
   {
-    type: "select",
+    message: "What is the type of media file you want to operate on",
     options: [
       { label: "Video file", value: "video" },
       { label: "Image file", value: "image" },
@@ -74,6 +74,7 @@ if (mediaFileType === "video") {
       { label: "Create pdf with text", value: 'createPDFWithDrawnText' },
       { label: "Add text to pdf file", value: "addTextToPdf" },
       { label: 'Embed jpg image to pdf file', value: "embedJpgToPdf" },
+      { label: 'Read pdf metadata', value: "readPdfMetadata" },
     ],
     options,
   );
@@ -88,7 +89,7 @@ const func = R.path([mediaFileType, result], utils);
 await func();
 
 
-outro(`You're all set!`);
+outro(`Done!`);
 // await items[result]();
 // if (result === 'convertmp4togif') {
 

@@ -1,75 +1,39 @@
 import fs from 'node:fs';
 import { PDFDocument, StandardFonts, degrees, rgb } from 'pdf-lib';
-import { intro, outro, isCancel, cancel, text } from '@clack/prompts';
 import * as R from 'ramda';
+import { getText, getSourceFile, getDestFile, getNumber } from './clack-helpers.js';
 
 // Do stuff
 
-const handleCancel = (value) => {
-  if (isCancel(value)) {
-    cancel('Operation cancelled.');
-    process.exit(0);
-  }
-};
+// const getText = async (options) => {
+//   const value = await text({type: 'text', ...options});
+//   handleCancel(value);
+//   return value;
+// };
 
-const getText = async (options) => {
-  const value = await text({type: 'text', ...options});
-  handleCancel(value);
-  return value;
-};
-
-const getSourceFile = async () => {
-  const result = await getText({
-    message: 'What is a source file?',
-    validate: (value) => {
-      if (!fs.existsSync(value)) {
-        return `File ${value} does not exist`;
-      }
-    },
-  });
-
-  return result;
-};
-
-const getDestFile = async () => {
-  const result = await getText({
-    message: 'What is a dest file?',
-  });
-
-  return result;
-};
-
-const getNumber = async (message, { isPositive = false }) => {
-  const value = await getText({
-    message,
-    validate: (value) => {
-      if (isNaN(Number(value))) {
-        return `input value should be a type of number, got ${typeof value}`;
-      } else if (isPositive && Number(value) < 1) {
-        return `input should be larger than 0`;
-      }
-    },
-  });
-  return Number(value);
-};
 
 // PDF Creation
 const createPDFWithDrawnText = async () => {
+  const file = await getDestFile();
+  const value = await getText({message: 'What is a text to be drawn?'});
   const pdfDoc = await PDFDocument.create()
   const page = pdfDoc.addPage()
   const { width, height } = page.getSize();
-  const value = await getText({message: 'fv'});
   page.drawText(value, {
     x: width / 2,
     y: height / 2,
   });
   const pdfBytes = await pdfDoc.save()
 
-  fs.writeFileSync('.\\files\\asf.pdf', pdfBytes);
+  fs.writeFileSync(file, pdfBytes);
 };
 
 const addTextToPdf = async () => {
   const sourceFile = await getText({ message: 'Source pdf file to operate on' });
+  const pageNumber = await getNumber('What is page number to place the image to?', { isPositive: true });
+  const textToAdd = await getText({ message: 'What is a text to be added to pdf' });
+  const degreesValue = await getNumber('What is degrees for a text?');
+
   const existingPdfBytes = fs.readFileSync(sourceFile);
 
   // Load a PDFDocument from the existing PDF bytes
@@ -80,11 +44,10 @@ const addTextToPdf = async () => {
 
   // Get the first page of the document
   const pages = pdfDoc.getPages()
-  const firstPage = pages[0]
+  const firstPage = pages[R.dec(pageNumber)];
 
   // Get the width and height of the first page
   const { width, height } = firstPage.getSize()
-  const textToAdd = await getText({ message: 'What is a text to be added to pdf' });
 
   // Draw a string of text diagonally across the first page
   firstPage.drawText(textToAdd, {
@@ -93,7 +56,7 @@ const addTextToPdf = async () => {
     size: 50,
     font: helveticaFont,
     color: rgb(0.95, 0.1, 0.1),
-    rotate: degrees(-45),
+    rotate: degrees(degreesValue),
   })
 
 
@@ -152,8 +115,33 @@ const embedJpgToPdf = async () => {
   fs.writeFileSync(destFile, pdfBytes);
 };
 
+const readPdfMetadata = async () => {
+  const source = await getSourceFile();
+  // This should be a Uint8Array or ArrayBuffer
+  // This data can be obtained in a number of different ways
+  // If your running in a Node environment, you could use fs.readFile()
+  // In the browser, you could make a fetch() call and use res.arrayBuffer()
+  const existingPdfBytes = fs.readFileSync(source);
+
+  // Load a PDFDocument without updating its existing metadata
+  const pdfDoc = await PDFDocument.load(existingPdfBytes, {
+    updateMetadata: false
+  });
+
+  // Print all available metadata fields
+  console.log('Title:', pdfDoc.getTitle())
+  console.log('Author:', pdfDoc.getAuthor())
+  console.log('Subject:', pdfDoc.getSubject())
+  console.log('Creator:', pdfDoc.getCreator())
+  console.log('Keywords:', pdfDoc.getKeywords())
+  console.log('Producer:', pdfDoc.getProducer())
+  console.log('Creation Date:', pdfDoc.getCreationDate())
+  console.log('Modification Date:', pdfDoc.getModificationDate())
+}
+
 export {
   createPDFWithDrawnText,
   addTextToPdf,
   embedJpgToPdf,
+  readPdfMetadata,
 };
