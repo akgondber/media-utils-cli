@@ -1,18 +1,17 @@
 import jimp from "jimp";
 import consola from "consola";
-import { getDestFile, getFile, getNumber, getSourceFile } from "./clack-helpers.js";
+import { getBool, getDestFile, getFile, getNumber, getSourceFile, getText } from "./clack-helpers.js";
 
 const saveImage = async (image) => {
-  const whereToWrite = await consola.prompt("What is the destination file");
+  const whereToWrite = await getDestFile();
   image.write(whereToWrite);
-  consola.success(`File ${whereToWrite} was written.`);
 };
 
 const blit = async () => {
-  const imageFile = await getSourceFile(); // consola.prompt("Source filename");
-  const placeableFile = await getFile("Image file to be inserted"); // consola.prompt("Image to be inserted");
-  const x = await getNumber("X"); // consola.prompt("X");
-  const y = await getNumber("Y"); // consola.prompt("Y");
+  const imageFile = await getSourceFile();
+  const placeableFile = await getFile("Image file to be inserted");
+  const x = await getNumber("X");
+  const y = await getNumber("Y");
   const whereToWrite = await getDestFile();
 
   const image = await jimp.read(imageFile);
@@ -23,16 +22,16 @@ const blit = async () => {
 };
 
 const blur = async () => {
-  const imageFile = await consola.prompt("Source filename");
+  const imageFile = await getSourceFile(); // consola.prompt("Source filename");
   const image = await jimp.read(imageFile);
-  const r = await consola.prompt("the pixel radius of the blur");
+  const r = await getNumber("pixel radius of the blur"); // consola.prompt("the pixel radius of the blur");
 
   image.blur(Number(r));
   await saveImage(image);
 };
 
 const invert = async () => {
-  const imageFile = await consola.prompt("Source filename");
+  const imageFile = await getSourceFile();
   const image = await jimp.read(imageFile);
 
   image.invert();
@@ -40,22 +39,22 @@ const invert = async () => {
 };
 
 const flip = async () => {
-  const imageFile = await consola.prompt("Source filename");
+  const imageFile = await getSourceFile();
   const image = await jimp.read(imageFile);
-  const horizontal = await consola.prompt('Horizontal?', { type: 'confirm' });
-  const vertical = await consola.prompt('Vertical?', { type: 'confirm' });
+  const horizontal = await getBool('Horizontal?');
+  const vertical = await getBool('Vertical?');
   image.flip(horizontal, vertical);
   saveImage(image);
 };
 
 const text = async () => {
-  const imageFile = await consola.prompt("Source filename");
+  const imageFile = await getSourceFile();
 
   const font = await jimp.loadFont(jimp.FONT_SANS_32_BLACK);
   const image = await jimp.read(imageFile);
-  const text = await consola.prompt("text");
-  const x = await consola.prompt("X");
-  const y = await consola.prompt("Y");
+  const text = await getText("text");
+  const x = await getNumber("X");
+  const y = await getNumber("Y");
 
   image.print(font, Number(x), Number(y), text);
   saveImage(image);

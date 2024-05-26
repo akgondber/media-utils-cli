@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { text, cancel, isCancel } from "@clack/prompts";
+import { text, cancel, isCancel, confirm } from "@clack/prompts";
 
 const handleCancel = (value) => {
     if (isCancel(value)) {
@@ -10,6 +10,12 @@ const handleCancel = (value) => {
 
 const getText = async (options) => {
     const value = await text({type: 'text', ...options});
+    handleCancel(value);
+    return value;
+};
+
+const getBool = async (message) => {
+    const value = await confirm({ message });
     handleCancel(value);
     return value;
 };
@@ -26,6 +32,20 @@ const getSourceFile = async () => {
 
     return result;
 };
+
+const getSourceFolder = async () => {
+    const result = await getText({
+        message: 'What is a source folder?',
+        validate: (value) => {
+        if (!fs.existsSync(value)) {
+            return `Folder ${value} does not exist`;
+        }
+        },
+    });
+
+    return result;
+};
+
 
 const getFile = async (message) => {
     const result = await getText({
@@ -65,7 +85,9 @@ const getNumber = async (message, { isPositive = false } = {}) => {
 export {
     getText,
     getSourceFile,
+    getSourceFolder,
     getFile,
     getDestFile,
     getNumber,
+    getBool,
 };
