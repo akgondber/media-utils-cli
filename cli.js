@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { consola } from "consola";
 import * as R from "ramda";
 import { intro, outro, select } from '@clack/prompts';
 import {
@@ -31,7 +30,6 @@ const utils = {
 };
 
 let options = [];
-consola.box("Media-Utils");
 
 intro(`Let's do some stuff`);
 
@@ -80,8 +78,8 @@ if (mediaFileType === "video") {
   );
 }
 
-const result = await consola.prompt("What kind of util you want to use", {
-  type: "select",
+const result = await select({
+  message: "What kind of util you want to use",
   options,
 });
 

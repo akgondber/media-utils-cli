@@ -1,5 +1,4 @@
 import jimp from "jimp";
-import consola from "consola";
 import { getBool, getDestFile, getFile, getNumber, getSourceFile, getText } from "./clack-helpers.js";
 
 const saveImage = async (image) => {
@@ -18,13 +17,13 @@ const blit = async () => {
   const target = await jimp.read(placeableFile);
 
   image.blit(target, Number(x), Number(y));
-  image.write(whereToWrite);
+  await saveImage(image);
 };
 
 const blur = async () => {
-  const imageFile = await getSourceFile(); // consola.prompt("Source filename");
+  const imageFile = await getSourceFile();
   const image = await jimp.read(imageFile);
-  const r = await getNumber("pixel radius of the blur"); // consola.prompt("the pixel radius of the blur");
+  const r = await getNumber("pixel radius of the blur");
 
   image.blur(Number(r));
   await saveImage(image);
@@ -44,7 +43,7 @@ const flip = async () => {
   const horizontal = await getBool('Horizontal?');
   const vertical = await getBool('Vertical?');
   image.flip(horizontal, vertical);
-  saveImage(image);
+  await saveImage(image);
 };
 
 const text = async () => {
@@ -57,7 +56,7 @@ const text = async () => {
   const y = await getNumber("Y");
 
   image.print(font, Number(x), Number(y), text);
-  saveImage(image);
+  await saveImage(image);
 };
 
 export { blit, blur, invert, flip, text };

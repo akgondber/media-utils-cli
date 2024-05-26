@@ -15,7 +15,7 @@ import { getText, getSourceFile, getDestFile, getNumber } from './clack-helpers.
 // PDF Creation
 const createPDFWithDrawnText = async () => {
   const file = await getDestFile();
-  const value = await getText({message: 'What is a text to be drawn?'});
+  const value = await getText('What is a text to be drawn?');
   const pdfDoc = await PDFDocument.create()
   const page = pdfDoc.addPage()
   const { width, height } = page.getSize();
@@ -29,9 +29,9 @@ const createPDFWithDrawnText = async () => {
 };
 
 const addTextToPdf = async () => {
-  const sourceFile = await getText({ message: 'Source pdf file to operate on' });
+  const sourceFile = await getText('Source pdf file to operate on');
   const pageNumber = await getNumber('What is page number to place the image to?', { isPositive: true });
-  const textToAdd = await getText({ message: 'What is a text to be added to pdf' });
+  const textToAdd = await getText('What is a text to be added to pdf');
   const degreesValue = await getNumber('What is degrees for a text?');
 
   const existingPdfBytes = fs.readFileSync(sourceFile);
@@ -62,7 +62,7 @@ const addTextToPdf = async () => {
 
   // Serialize the PDFDocument to bytes (a Uint8Array)
   const pdfBytes = await pdfDoc.save();
-  const destFile = await getText({ message: 'What is a destination file' });
+  const destFile = await getText('What is a destination file');
   fs.writeFileSync(destFile, pdfBytes);
 };
 

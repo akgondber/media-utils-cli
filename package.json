@@ -1,6 +1,6 @@
 {
   "name": "media-utils-cli",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Media utils for different kinds of files - transforming, resizing, image manipulations, etc.",
   "repository": "https://github.com/akgondber/media-utils-cli",
   "author": "Rushan Alyautdinov <akgondber@gmail.com>",
