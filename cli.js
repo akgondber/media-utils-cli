@@ -6,7 +6,7 @@ import {
   convertAllFilesToGif,
   convertVideoToGif,
 } from "./source/video-utils.js";
-import { blit, blur, invert, flip, text } from "./source/image-utils.js";
+import { blit, blur, invert, flip, text, contain, mask, rotate } from "./source/image-utils.js";
 import { createPDFWithDrawnText, addTextToPdf, embedJpgToPdf, readPdfMetadata } from "./source/pdf-utils.js";
 
 const utils = {
@@ -20,6 +20,9 @@ const utils = {
     invert,
     flip,
     text,
+    contain,
+    mask,
+    rotate,
   },
   pdf: {
     createPDFWithDrawnText,
@@ -30,6 +33,16 @@ const utils = {
 };
 
 let options = [];
+const imageOptionsMappings = {
+  blit: 'Blit an image onto another',
+  blur: 'Blur an image',
+  invert: "Invert an image's colors",
+  flip: "Flip an image along its x or y axis",
+  text: "Print text onto an image",
+  contain: "Contain an image within a height and width",
+  mask: "Mask a source image on to this image using average pixel colour",
+  rotate: "Rotate the image counter-clockwise by a number of degrees",
+};
 
 intro(`Let's do some stuff`);
 
@@ -57,15 +70,26 @@ if (mediaFileType === "video") {
   );
 } else if (mediaFileType === "image") {
   options = R.concat(
-    [
-      { label: "Blit", value: "blit" },
-      { label: "Blur", value: "blur" },
-      { label: "Flip", value: "flip" },
-      { label: "Text", value: "text" },
-      { label: "Invert", value: "invert" },
-    ],
-    options,
+    R.map(R.applySpec({
+        label: R.flip(R.prop)(imageOptionsMappings),
+        value: R.identity,
+      }),
+      R.keys(imageOptionsMappings),
+    ),
+    options
   );
+  console.log(options);
+
+  //   [
+  //     { label: "Blit", value: "blit" },
+  //     { label: "Blur", value: "blur" },
+  //     { label: "Flip", value: "flip" },
+  //     { label: "Text", value: "text" },
+  //     { label: "Invert", value: "invert" },
+  //     { label: "Scale the image to the given width and height keeping the aspect ratio", value: 'contain' },
+  //   ],
+  //   options,
+  // );
 } else if (mediaFileType === 'pdf') {
   options = R.concat(
     [

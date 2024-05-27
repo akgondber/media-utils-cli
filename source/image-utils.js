@@ -59,4 +59,33 @@ const text = async () => {
   await saveImage(image);
 };
 
-export { blit, blur, invert, flip, text };
+const contain = async () => {
+  const imageFile = await getSourceFile();
+  const width = await getNumber("width");
+  const height = await getNumber("height");
+  const image = await jimp.read(imageFile);
+
+  image.contain(width, height);
+  await saveImage(image);
+};
+
+const mask = async () => {
+  const imageFile = await getSourceFile();
+  const maskFile = await getFile("Mask image");
+  const image = await jimp.read(imageFile);
+  const mask = await jimp.read(maskFile);
+
+  image.mask(mask, 50, 60);
+  await saveImage(image);
+};
+
+const rotate = async () => {
+  const imageFile = await getSourceFile();
+  const degrees = await getNumber("The number of degrees to rotate");
+  const image = await jimp.read(imageFile);
+
+  image.rotate(degrees);
+  await saveImage(image);
+};
+
+export { blit, blur, invert, flip, text, contain, mask, rotate };
