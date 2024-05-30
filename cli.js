@@ -5,14 +5,20 @@ import { intro, outro, select } from '@clack/prompts';
 import {
   convertAllFilesToGif,
   convertVideoToGif,
+  concatVideoFiles,
+  addStartingTitle,
+  addStartingTitleAndImage,
 } from "./source/video-utils.js";
-import { blit, blur, invert, flip, text, contain, mask, rotate } from "./source/image-utils.js";
+import { blit, blur, invert, flip, text, contain, mask, rotate, convertToVideoAddingTitleAndSubtitle } from "./source/image-utils.js";
 import { createPDFWithDrawnText, addTextToPdf, embedJpgToPdf, readPdfMetadata } from "./source/pdf-utils.js";
 
 const utils = {
   video: {
     convertVideoToGif,
     convertAllFilesToGif,
+    concatVideoFiles,
+    addStartingTitle,
+    addStartingTitleAndImage,
   },
   image: {
     blit,
@@ -23,6 +29,7 @@ const utils = {
     contain,
     mask,
     rotate,
+    convertToVideoAddingTitleAndSubtitle,
   },
   pdf: {
     createPDFWithDrawnText,
@@ -42,6 +49,14 @@ const imageOptionsMappings = {
   contain: "Contain an image within a height and width",
   mask: "Mask a source image on to this image using average pixel colour",
   rotate: "Rotate the image counter-clockwise by a number of degrees",
+  convertToVideoAddingTitleAndSubtitle: "Create a video by adding title and subtitle to image",
+};
+const videoOptionsMappings = {
+  convertVideoToGif: "Convert video file to gif",
+  convertAllFilesToGif: "Convert all video files in folder to gif",
+  concatVideoFiles: "Concat several video files",
+  addStartingTitle: "Add animated title to video",
+  addStartingTitleAndImage: "Add animated starting title and image to video",
 };
 
 intro(`Let's do some stuff`);
@@ -59,13 +74,19 @@ const mediaFileType = await select(
 
 if (mediaFileType === "video") {
   options = R.concat(
-    [
-      { label: "Convert video file to gif", value: "convertVideoToGif" },
-      {
-        label: "Convert all video files in folder to gif",
-        value: "convertAllFilesToGif",
-      },
-    ],
+      R.map(R.applySpec({
+        label: R.flip(R.prop)(videoOptionsMappings),
+        value: R.identity,
+      }),
+      R.keys(videoOptionsMappings),
+    ),
+    // [
+    //   { label: "Convert video file to gif", value: "convertVideoToGif" },
+    //   {
+    //     label: "Convert all video files in folder to gif",
+    //     value: "convertAllFilesToGif",
+    //   },
+    // ],
     options,
   );
 } else if (mediaFileType === "image") {
@@ -78,18 +99,6 @@ if (mediaFileType === "video") {
     ),
     options
   );
-  console.log(options);
-
-  //   [
-  //     { label: "Blit", value: "blit" },
-  //     { label: "Blur", value: "blur" },
-  //     { label: "Flip", value: "flip" },
-  //     { label: "Text", value: "text" },
-  //     { label: "Invert", value: "invert" },
-  //     { label: "Scale the image to the given width and height keeping the aspect ratio", value: 'contain' },
-  //   ],
-  //   options,
-  // );
 } else if (mediaFileType === 'pdf') {
   options = R.concat(
     [

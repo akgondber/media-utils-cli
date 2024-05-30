@@ -14,9 +14,15 @@ $ npm install --global media-utils-cli
 $ media-utils-cli
 ```
 
-## Demo
+## Demos
+
+### Example
 
 ![demo](media/demo.gif)
+
+### Convert video file to gif
+
+![demo converting video to gif](media/demo_convert_video_to_gif.mp4)
 
 ## Notes
 
@@ -26,6 +32,7 @@ In order to use video utils you should have [ffmpeg](https://ffmpeg.org/) instal
 
 - [jimp](https://github.com/jimp-dev/jimp) - to manipulate over image files
 - [pdf-lib](https://github.com/Hopding/pdf-lib) - to do pdf documents manipulations
+- [editly](https://github.com/mifi/editly) - Slick, declarative command line video editing
 
 ## License
 

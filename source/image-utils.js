@@ -1,5 +1,6 @@
 import jimp from "jimp";
 import { getBool, getDestFile, getFile, getNumber, getSourceFile, getText } from "./clack-helpers.js";
+import Editly from "editly";
 
 const saveImage = async (image) => {
   const whereToWrite = await getDestFile();
@@ -88,4 +89,22 @@ const rotate = async () => {
   await saveImage(image);
 };
 
-export { blit, blur, invert, flip, text, contain, mask, rotate };
+const convertToVideoAddingTitleAndSubtitle = async () => {
+  const img = await getSourceFile();
+  const title = await getText("What is a title?");
+  const subtitle = await getText("What is a subtitle?");
+  const dest = await getDestFile();
+
+  await Editly({
+    outPath: dest,
+    clips: [
+      { duration: 7, layers: [
+        { type: 'image', path: img },
+        { type: 'news-title', text: title },
+        { type: 'subtitle', text: subtitle, backgroundColor: 'rgba(0,0,0,0.5)' }
+      ] },
+    ]
+  });
+};
+
+export { blit, blur, invert, flip, text, contain, mask, rotate, convertToVideoAddingTitleAndSubtitle };
