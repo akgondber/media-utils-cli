@@ -20,6 +20,20 @@ const getBool = async (message) => {
     return value;
 };
 
+const getTime = async (message) => {
+    const value = await text({
+        message,
+        validate: (value) => {
+            if (!/(\d{2})|(\d{2}:\d{2}:\d{2}(\.\d{1,})?)/.test(value)) {
+                return `Time should be in "ss" or "hh:mm:ss" format`;
+            }
+        },
+    });
+    handleCancel(value);
+    return value;
+};
+
+
 const getSourceFile = async () => {
     const result = await getText('What is a source file?', {
         validate: (value) => {
@@ -78,6 +92,7 @@ const getNumber = async (message, { isPositive = false } = {}) => {
 
 export {
     getText,
+    getTime,
     getSourceFile,
     getSourceFolder,
     getFile,

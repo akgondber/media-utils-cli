@@ -5,6 +5,7 @@ import { intro, outro, select } from '@clack/prompts';
 import {
   convertAllFilesToGif,
   convertVideoToGif,
+  cutVideo,
   concatVideoFiles,
   addStartingTitle,
   addStartingTitleAndImage,
@@ -16,6 +17,7 @@ const utils = {
   video: {
     convertVideoToGif,
     convertAllFilesToGif,
+    cutVideo,
     concatVideoFiles,
     addStartingTitle,
     addStartingTitleAndImage,
@@ -54,6 +56,7 @@ const imageOptionsMappings = {
 const videoOptionsMappings = {
   convertVideoToGif: "Convert video file to gif",
   convertAllFilesToGif: "Convert all video files in folder to gif",
+  cutVideo: "Cut up video",
   concatVideoFiles: "Concat several video files",
   addStartingTitle: "Add animated title to video",
   addStartingTitleAndImage: "Add animated starting title and image to video",
@@ -80,13 +83,6 @@ if (mediaFileType === "video") {
       }),
       R.keys(videoOptionsMappings),
     ),
-    // [
-    //   { label: "Convert video file to gif", value: "convertVideoToGif" },
-    //   {
-    //     label: "Convert all video files in folder to gif",
-    //     value: "convertAllFilesToGif",
-    //   },
-    // ],
     options,
   );
 } else if (mediaFileType === "image") {

@@ -24,6 +24,10 @@ $ media-utils-cli
 
 ![demo converting video to gif](media/demo_convert_video_to_gif.gif)
 
+### Cut up video file
+
+![demo cutting up video file](media/demo_cut_example.gif)
+
 ## Notes
 
 In order to use video utils you should have [ffmpeg](https://ffmpeg.org/) installed in your system.

@@ -7,7 +7,7 @@ import { spinner, confirm } from "@clack/prompts";
 import converter from 'number-to-words';
 import Editly from "editly";
 import * as R from 'ramda';
-import { getBool, getDestFile, getFile, getSourceFile, getSourceFolder, getText } from "./clack-helpers.js";
+import { getBool, getDestFile, getFile, getSourceFile, getSourceFolder, getText, getTime } from "./clack-helpers.js";
 
 const convertVideoToGif = async () => {
   const file = await getSourceFile();
@@ -21,9 +21,19 @@ const convertVideoToGif = async () => {
     await execa("ffmpeg", ["-i", file, "-pix_fmt", "rgb24", gifFile]);
     s.stop(`Created file ${gifFile}`);
   } else {
-    s.start("dfcd");
     s.stop(`${file} already has gif format`);
   }
+};
+
+const cutVideo = async () => {
+  const file = await getSourceFile();
+  const cutFrom = await getTime("Start time");
+  const duration = await getTime("Duration");
+  const dest = await getDestFile();
+  const s = spinner();
+  s.start("Cutting");
+  await execa("ffmpeg", ["-i", file , "-ss", cutFrom, "-t", duration, "-acodec", "copy", dest]);
+  s.stop(`File ${dest} was successfully created`);
 };
 
 const convertAllFilesToGif = async () => {
@@ -47,6 +57,7 @@ const convertAllFilesToGif = async () => {
       s.stop(`Created file ${gifFile}`);
       return;
     } else {
+      s.start('Checking on gif file existence for video file');
       s.stop(`${file} already converted to gif format`);
     }
   };
@@ -85,13 +96,11 @@ const concatVideoFiles = async () => {
 
 const addStartingTitle = async () => {
   const videoFile = await getFile(`Video file`);
-  const imageFile = await getFile('Image file');
   const title = await getText('Text to add');
   const dest = await getDestFile();
 
   const clips = [
     { duration: 3, transition: { name: 'directional-left' }, layers: [{ type: 'title-background', text: title, background: { type: 'linear-gradient', colors: ['#02aab0', '#00cdac'] } }] },
-    { duration: 2.5, transition: { name: 'simplezoom' }, layers: [{ type: 'image', path: imageFile, zoomDirection: 'in' }] },
     { layers: [
       { type: 'video', path: videoFile, },
     ] },
@@ -125,4 +134,4 @@ const addStartingTitleAndImage = async () => {
   });
 };
 
-export { convertVideoToGif, convertAllFilesToGif, concatVideoFiles, addStartingTitle, addStartingTitleAndImage };
+export { convertVideoToGif, convertAllFilesToGif, concatVideoFiles, addStartingTitle, addStartingTitleAndImage, cutVideo };
