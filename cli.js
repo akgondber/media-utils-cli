@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import * as R from "ramda";
-import { intro, outro, select } from '@clack/prompts';
+import { intro, outro, select, note } from "@clack/prompts";
+import { ok, err } from "neverthrow";
 import {
   convertAllFilesToGif,
   convertVideoToGif,
@@ -10,8 +11,27 @@ import {
   addStartingTitle,
   addStartingTitleAndImage,
 } from "./source/video-utils.js";
-import { blit, blur, invert, flip, text, contain, mask, rotate, convertToVideoAddingTitleAndSubtitle } from "./source/image-utils.js";
-import { createPDFWithDrawnText, addTextToPdf, embedJpgToPdf, readPdfMetadata } from "./source/pdf-utils.js";
+import { handleCancel } from "./utils.js";
+import {
+  blit,
+  blur,
+  invert,
+  flip,
+  text,
+  contain,
+  mask,
+  rotate,
+  pixelate,
+  contrast,
+  opacity,
+  convertToVideoAddingTitleAndSubtitle,
+} from "./source/image-utils.js";
+import {
+  createPDFWithDrawnText,
+  addTextToPdf,
+  embedJpgToPdf,
+  readPdfMetadata,
+} from "./source/pdf-utils.js";
 
 const utils = {
   video: {
@@ -31,6 +51,9 @@ const utils = {
     contain,
     mask,
     rotate,
+    pixelate,
+    contrast,
+    opacity,
     convertToVideoAddingTitleAndSubtitle,
   },
   pdf: {
@@ -38,20 +61,24 @@ const utils = {
     addTextToPdf,
     embedJpgToPdf,
     readPdfMetadata,
-  }
+  },
 };
 
 let options = [];
 const imageOptionsMappings = {
-  blit: 'Blit an image onto another',
-  blur: 'Blur an image',
+  blit: "Blit an image onto another",
+  blur: "Blur an image",
   invert: "Invert an image's colors",
   flip: "Flip an image along its x or y axis",
   text: "Print text onto an image",
   contain: "Contain an image within a height and width",
   mask: "Mask a source image on to this image using average pixel colour",
   rotate: "Rotate the image counter-clockwise by a number of degrees",
-  convertToVideoAddingTitleAndSubtitle: "Create a video by adding title and subtitle to image",
+  pixelate: "Pixelate the image",
+  contrast: "Contrast the image",
+  opacity: "Apply an opacity to the image",
+  convertToVideoAddingTitleAndSubtitle:
+    "Create a video by adding title and subtitle to image",
 };
 const videoOptionsMappings = {
   convertVideoToGif: "Convert video file to gif",
@@ -64,20 +91,21 @@ const videoOptionsMappings = {
 
 intro(`Let's do some stuff`);
 
-const mediaFileType = await select(
-  {
-    message: "What is the type of media file you want to operate on",
-    options: [
-      { label: "Video file", value: "video" },
-      { label: "Image file", value: "image" },
-      { label: "PDF file", value: "pdf" },
-    ],
-  },
-);
+const mediaFileType = await select({
+  message: "What is the type of media file you want to operate on",
+  options: [
+    { label: "Video file", value: "video" },
+    { label: "Image file", value: "image" },
+    { label: "PDF file", value: "pdf" },
+  ],
+});
+
+handleCancel(mediaFileType);
 
 if (mediaFileType === "video") {
   options = R.concat(
-      R.map(R.applySpec({
+    R.map(
+      R.applySpec({
         label: R.flip(R.prop)(videoOptionsMappings),
         value: R.identity,
       }),
@@ -87,21 +115,22 @@ if (mediaFileType === "video") {
   );
 } else if (mediaFileType === "image") {
   options = R.concat(
-    R.map(R.applySpec({
+    R.map(
+      R.applySpec({
         label: R.flip(R.prop)(imageOptionsMappings),
         value: R.identity,
       }),
       R.keys(imageOptionsMappings),
     ),
-    options
+    options,
   );
-} else if (mediaFileType === 'pdf') {
+} else if (mediaFileType === "pdf") {
   options = R.concat(
     [
-      { label: "Create pdf with text", value: 'createPDFWithDrawnText' },
+      { label: "Create pdf with text", value: "createPDFWithDrawnText" },
       { label: "Add text to pdf file", value: "addTextToPdf" },
-      { label: 'Embed jpg image to pdf file', value: "embedJpgToPdf" },
-      { label: 'Read pdf metadata', value: "readPdfMetadata" },
+      { label: "Embed jpg image to pdf file", value: "embedJpgToPdf" },
+      { label: "Read pdf metadata", value: "readPdfMetadata" },
     ],
     options,
   );
@@ -112,11 +141,27 @@ const result = await select({
   options,
 });
 
-const func = R.path([mediaFileType, result], utils);
-await func();
+handleCancel(result);
 
+let rslt;
 
-outro(`Done!`);
+try {
+  const func = R.path([mediaFileType, result], utils);
+  if (!R.isNil(func)) {
+    await func();
+  }
+  rslt = ok("Done");
+} catch (error) {
+  rslt = err(error);
+}
+
+if (rslt.isErr()) {
+  note(rslt.error.message);
+  outro(`Failed.`);
+} else {
+  outro("Done!");
+}
+
 // await items[result]();
 // if (result === 'convertmp4togif') {
 

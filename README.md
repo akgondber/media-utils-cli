@@ -28,6 +28,10 @@ $ media-utils-cli
 
 ![demo cutting up video file](media/demo_cut_example.gif)
 
+### Image manipulation: contrast
+
+![demo contrast image file](media/demo_image_contrast.gif)
+
 ## Notes
 
 In order to use video utils you should have [ffmpeg](https://ffmpeg.org/) installed in your system.

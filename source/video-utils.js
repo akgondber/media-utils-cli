@@ -4,10 +4,18 @@ import fs from "node:fs";
 import path from "node:path";
 import pMap from "p-map";
 import { spinner, confirm } from "@clack/prompts";
-import converter from 'number-to-words';
+import converter from "number-to-words";
 import Editly from "editly";
-import * as R from 'ramda';
-import { getBool, getDestFile, getFile, getSourceFile, getSourceFolder, getText, getTime } from "./clack-helpers.js";
+import * as R from "ramda";
+import {
+  getBool,
+  getDestFile,
+  getFile,
+  getSourceFile,
+  getSourceFolder,
+  getText,
+  getTime,
+} from "./clack-helpers.js";
 
 const convertVideoToGif = async () => {
   const file = await getSourceFile();
@@ -32,7 +40,17 @@ const cutVideo = async () => {
   const dest = await getDestFile();
   const s = spinner();
   s.start("Cutting");
-  await execa("ffmpeg", ["-i", file , "-ss", cutFrom, "-t", duration, "-acodec", "copy", dest]);
+  await execa("ffmpeg", [
+    "-i",
+    file,
+    "-ss",
+    cutFrom,
+    "-t",
+    duration,
+    "-acodec",
+    "copy",
+    dest,
+  ]);
   s.stop(`File ${dest} was successfully created`);
 };
 
@@ -57,7 +75,7 @@ const convertAllFilesToGif = async () => {
       s.stop(`Created file ${gifFile}`);
       return;
     } else {
-      s.start('Checking on gif file existence for video file');
+      s.start("Checking on gif file existence for video file");
       s.stop(`${file} already converted to gif format`);
     }
   };
@@ -73,58 +91,50 @@ const concatVideoFiles = async () => {
   do {
     const sourceFile = await getFile(`${converter.toOrdinal(i)} file`);
     sourceFiles.push(sourceFile);
-    if (i > 2)
-      addNewFile = await getBool('Add new file?');
+    if (i > 2) addNewFile = await getBool("Add new file?");
     i++;
-  } while (addNewFile) {
-
+  } while (addNewFile);
+  {
   }
 
-  const clips = R.map((file) => ({
-    layers: {
-      type: 'video',
-      path: file,
-    },
-  }), sourceFiles);
+  const clips = R.map(
+    (file) => ({
+      layers: {
+        type: "video",
+        path: file,
+      },
+    }),
+    sourceFiles,
+  );
 
   await Editly({
     keepSourceAudio: true,
-    outPath: 'vid\\concet.mp4',
+    outPath: "vid\\concet.mp4",
     clips: clips,
   });
 };
 
 const addStartingTitle = async () => {
   const videoFile = await getFile(`Video file`);
-  const title = await getText('Text to add');
+  const title = await getText("Text to add");
   const dest = await getDestFile();
 
   const clips = [
-    { duration: 3, transition: { name: 'directional-left' }, layers: [{ type: 'title-background', text: title, background: { type: 'linear-gradient', colors: ['#02aab0', '#00cdac'] } }] },
-    { layers: [
-      { type: 'video', path: videoFile, },
-    ] },
-  ];
-
-  await Editly({
-    keepSourceAudio: true,
-    outPath: dest,
-    clips: clips,
-  });
-}
-
-const addStartingTitleAndImage = async () => {
-  const videoFile = await getFile(`Video file`);
-  const imageFile = await getFile('Image file');
-  const title = await getText('Text to add');
-  const dest = await getDestFile();
-
-  const clips = [
-    { duration: 2, transition: { name: 'directional-left' }, layers: [{ type: 'title-background', text: title, background: { type: 'linear-gradient', colors: ['#02aab0', '#00cdac'] } }] },
-    { duration: 1.5, transition: { name: 'simplezoom' }, layers: [{ type: 'image', path: imageFile, zoomDirection: 'in' }] },
-    { layers: [
-      { type: 'video', path: videoFile, },
-    ] },
+    {
+      duration: 3,
+      transition: { name: "directional-left" },
+      layers: [
+        {
+          type: "title-background",
+          text: title,
+          background: {
+            type: "linear-gradient",
+            colors: ["#02aab0", "#00cdac"],
+          },
+        },
+      ],
+    },
+    { layers: [{ type: "video", path: videoFile }] },
   ];
 
   await Editly({
@@ -134,4 +144,47 @@ const addStartingTitleAndImage = async () => {
   });
 };
 
-export { convertVideoToGif, convertAllFilesToGif, concatVideoFiles, addStartingTitle, addStartingTitleAndImage, cutVideo };
+const addStartingTitleAndImage = async () => {
+  const videoFile = await getFile(`Video file`);
+  const imageFile = await getFile("Image file");
+  const title = await getText("Text to add");
+  const dest = await getDestFile();
+
+  const clips = [
+    {
+      duration: 2,
+      transition: { name: "directional-left" },
+      layers: [
+        {
+          type: "title-background",
+          text: title,
+          background: {
+            type: "linear-gradient",
+            colors: ["#02aab0", "#00cdac"],
+          },
+        },
+      ],
+    },
+    {
+      duration: 1.5,
+      transition: { name: "simplezoom" },
+      layers: [{ type: "image", path: imageFile, zoomDirection: "in" }],
+    },
+    { layers: [{ type: "video", path: videoFile }] },
+  ];
+
+  await Editly({
+    keepSourceAudio: true,
+    outPath: dest,
+    clips: clips,
+  });
+};
+
+export {
+  convertVideoToGif,
+  convertAllFilesToGif,
+  concatVideoFiles,
+  addStartingTitle,
+  addStartingTitleAndImage,
+  cutVideo,
+};

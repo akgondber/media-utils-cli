@@ -1,5 +1,12 @@
 import jimp from "jimp";
-import { getBool, getDestFile, getFile, getNumber, getSourceFile, getText } from "./clack-helpers.js";
+import {
+  getBool,
+  getDestFile,
+  getFile,
+  getNumber,
+  getSourceFile,
+  getText,
+} from "./clack-helpers.js";
 import Editly from "editly";
 
 const saveImage = async (image) => {
@@ -41,8 +48,8 @@ const invert = async () => {
 const flip = async () => {
   const imageFile = await getSourceFile();
   const image = await jimp.read(imageFile);
-  const horizontal = await getBool('Horizontal?');
-  const vertical = await getBool('Vertical?');
+  const horizontal = await getBool("Horizontal?");
+  const vertical = await getBool("Vertical?");
   image.flip(horizontal, vertical);
   await saveImage(image);
 };
@@ -89,6 +96,37 @@ const rotate = async () => {
   await saveImage(image);
 };
 
+const pixelate = async () => {
+  const imageFile = await getSourceFile();
+  const size = await getNumber("The size");
+  const image = await jimp.read(imageFile);
+
+  image.pixelate(size);
+  await saveImage(image);
+};
+
+const contrast = async () => {
+  const imageFile = await getSourceFile();
+  const size = await getNumber("The size in [-1, 1] range", {
+    inRange: { min: -1, max: 1 },
+  });
+  const image = await jimp.read(imageFile);
+
+  image.contrast(size);
+  await saveImage(image);
+};
+
+const opacity = async () => {
+  const imageFile = await getSourceFile();
+  const value = await getNumber("The value in [0, 1] range", {
+    inRange: { min: 0, max: 1 },
+  });
+  const image = await jimp.read(imageFile);
+
+  image.opacity(value);
+  await saveImage(image);
+};
+
 const convertToVideoAddingTitleAndSubtitle = async () => {
   const img = await getSourceFile();
   const title = await getText("What is a title?");
@@ -98,13 +136,33 @@ const convertToVideoAddingTitleAndSubtitle = async () => {
   await Editly({
     outPath: dest,
     clips: [
-      { duration: 7, layers: [
-        { type: 'image', path: img },
-        { type: 'news-title', text: title },
-        { type: 'subtitle', text: subtitle, backgroundColor: 'rgba(0,0,0,0.5)' }
-      ] },
-    ]
+      {
+        duration: 7,
+        layers: [
+          { type: "image", path: img },
+          { type: "news-title", text: title },
+          {
+            type: "subtitle",
+            text: subtitle,
+            backgroundColor: "rgba(0,0,0,0.5)",
+          },
+        ],
+      },
+    ],
   });
 };
 
-export { blit, blur, invert, flip, text, contain, mask, rotate, convertToVideoAddingTitleAndSubtitle };
+export {
+  blit,
+  blur,
+  invert,
+  flip,
+  text,
+  contain,
+  mask,
+  rotate,
+  pixelate,
+  contrast,
+  opacity,
+  convertToVideoAddingTitleAndSubtitle,
+};
