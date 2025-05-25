@@ -107,12 +107,12 @@ const pixelate = async () => {
 
 const contrast = async () => {
   const imageFile = await getSourceFile();
-  const size = await getNumber("The size in [-1, 1] range", {
+  const value = await getNumber("Value in [-1, 1] range", {
     inRange: { min: -1, max: 1 },
   });
   const image = await jimp.read(imageFile);
 
-  image.contrast(size);
+  image.contrast(value);
   await saveImage(image);
 };
 
