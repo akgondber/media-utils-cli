@@ -28,9 +28,21 @@ $ media-utils-cli
 
 ![demo cutting up video file](media/demo_cut_example.gif)
 
+### Add animated title
+
+![demo add animated title](media/demo_add_animated_title.gif)
+
 ### Image manipulation: contrast
 
-![demo contrast image file](media/demo_image_contrast.gif)
+![demo contrast image file](media/demo_image_contrast_prepared.gif)
+
+### Image manipulation: pixelating
+
+![demo pixelate image](media/demo_pixelate_image.gif)
+
+### Image manipulation: cropping
+
+![demo crop image](media/demo_crop_image.gif)
 
 ## Notes
 

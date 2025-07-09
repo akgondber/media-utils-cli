@@ -109,7 +109,7 @@ const concatVideoFiles = async () => {
 
   await Editly({
     keepSourceAudio: true,
-    outPath: "vid\\concet.mp4",
+    outPath: "vid\\concatenated.mp4",
     clips: clips,
   });
 };

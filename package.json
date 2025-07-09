@@ -1,6 +1,6 @@
 {
   "name": "media-utils-cli",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Media utils for different kinds of files - transforming, resizing, image manipulations, etc.",
   "repository": "https://github.com/akgondber/media-utils-cli",
   "author": "Rushan Alyautdinov <akgondber@gmail.com>",
@@ -8,7 +8,8 @@
     "test": "uvu",
     "start": "node cli.js",
     "prettify": "prettier . --write",
-    "build": "unbuild"
+    "build": "unbuild",
+    "pretcheck": "prettier . --check"
   },
   "keywords": [
     "cli",

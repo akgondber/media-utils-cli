@@ -25,6 +25,7 @@ import {
   contrast,
   opacity,
   convertToVideoAddingTitleAndSubtitle,
+  crop,
 } from "./source/image-utils.js";
 import {
   createPDFWithDrawnText,
@@ -55,6 +56,7 @@ const utils = {
     contrast,
     opacity,
     convertToVideoAddingTitleAndSubtitle,
+    crop,
   },
   pdf: {
     createPDFWithDrawnText,
@@ -79,6 +81,7 @@ const imageOptionsMappings = {
   opacity: "Apply an opacity to the image",
   convertToVideoAddingTitleAndSubtitle:
     "Create a video by adding title and subtitle to image",
+  crop: "Crop the image at a given point to a give size",
 };
 const videoOptionsMappings = {
   convertVideoToGif: "Convert video file to gif",

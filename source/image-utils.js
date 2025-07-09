@@ -152,6 +152,18 @@ const convertToVideoAddingTitleAndSubtitle = async () => {
   });
 };
 
+const crop = async () => {
+  const imageFile = await getSourceFile();
+  const x = await getNumber("What is x position?");
+  const y = await getNumber("What is y position?");
+  const height = await getNumber("What is height?");
+  const width = await getNumber("What is width?");
+  const image = await jimp.read(imageFile);
+
+  image.crop(x, y, width, height);
+  await saveImage(image);
+};
+
 export {
   blit,
   blur,
@@ -165,4 +177,5 @@ export {
   contrast,
   opacity,
   convertToVideoAddingTitleAndSubtitle,
+  crop,
 };
